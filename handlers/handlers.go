@@ -14,6 +14,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// number of function calls
 var funcCounter int = 0
 
 // UserInputHandler listens for user input and sends messages
@@ -32,12 +33,14 @@ func UserInputHandler(conn *websocket.Conn, responseDone chan bool, wg *sync.Wai
 			return
 		}
 
+		// Send user message to the server
 		err := utils.SendUserMessage(conn, text)
 		if err != nil {
 			fmt.Println("Send error:", err)
 			return
 		}
 
+		// Send model response request to the server
 		err = utils.SendModelResponse(conn)
 		if err != nil {
 			fmt.Println("Send error:", err)
@@ -57,6 +60,7 @@ func MessageReceiver(conn *websocket.Conn, responseDone chan bool, wg *sync.Wait
 			return
 		}
 
+		// Process the received message
 		ProcessMessage(conn, message, responseDone)
 	}
 }
@@ -78,7 +82,7 @@ func ProcessMessage(conn *websocket.Conn, message []byte, responseDone chan bool
 		funcCounter++
 	case "response.done":
 		if funcCounter > 0 {
-			FunctionCallHandler(conn,message)
+			FunctionCallHandler(conn, message)
 			funcCounter--
 		} else {
 			responseDone <- false
@@ -88,9 +92,9 @@ func ProcessMessage(conn *websocket.Conn, message []byte, responseDone chan bool
 
 	default:
 	}
-	
 }
 
+// FunctionCallHandler handles function call responses
 func FunctionCallHandler(conn *websocket.Conn, message []byte) {
 	var functionCall models.ModelResponseFunction
 	json.Unmarshal(message, &functionCall)
@@ -105,6 +109,8 @@ func FunctionCallHandler(conn *websocket.Conn, message []byte) {
 		fmt.Println("Function not found")
 	}
 }
+
+// sendFunctionOutput sends the result of a function call back to the server
 func sendFunctionOutput(conn *websocket.Conn, callId string, result int) {
 	output := models.FunctionOutput{
 		Type: "conversation.item.create",
@@ -119,6 +125,7 @@ func sendFunctionOutput(conn *websocket.Conn, callId string, result int) {
 		},
 	}
 
+	// Send the function output to the server
 	err := utils.SendJSONMessage(conn, output)
 	if err != nil {
 		fmt.Println("Send error:", err)
@@ -126,6 +133,3 @@ func sendFunctionOutput(conn *websocket.Conn, callId string, result int) {
 	}
 	utils.SendModelResponse(conn)
 }
-
-
-

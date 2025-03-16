@@ -10,17 +10,20 @@ import (
 
 // SendJSONMessage sends a JSON message via WebSocket
 func SendJSONMessage(conn *websocket.Conn, data interface{}) error {
+	// Marshal the data into a JSON byte slice
 	jsonMsg, err := json.Marshal(data)
 	if err != nil {
+		// Print and return the error if JSON marshaling fails
 		fmt.Println("JSON error:", err)
 		return err
 	}
+	// Write the JSON message to the WebSocket connection
 	return conn.WriteMessage(websocket.TextMessage, jsonMsg)
 }
 
-// SendUserMessage sends a user message through the websocket connection
-
+// SendUserMessage sends a user message through the WebSocket connection
 func SendUserMessage(conn *websocket.Conn, text string) error {
+	// Create a user message with the provided text
 	userMsg := models.UserMessage{
 		Type: "conversation.item.create",
 		Item: struct {
@@ -40,15 +43,20 @@ func SendUserMessage(conn *websocket.Conn, text string) error {
 		},
 	}
 	
+	// Send the user message as a JSON message via WebSocket
 	return SendJSONMessage(conn, userMsg)
 }
 
+// SendModelResponse sends a model response through the WebSocket connection
 func SendModelResponse(conn *websocket.Conn) error {
+	// Create a model response message
 	modelMsg := models.ModelResponseCreate{
 		Type: "response.create",
-		Response: models.Response {
+		Response: models.Response{
 			Modalities: []string{"text"},
 		},
 	}
+	
+	// Send the model response as a JSON message via WebSocket
 	return SendJSONMessage(conn, modelMsg)
 }

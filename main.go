@@ -8,11 +8,7 @@ import (
 	"github.com/Yair0001/GPT-4o-mini-CLI/functions"
 	"github.com/Yair0001/GPT-4o-mini-CLI/handlers"
 	"github.com/Yair0001/GPT-4o-mini-CLI/models"
-	// "github.com/gorilla/websocket"
-	// "github.com/Yair0001/GPT-4o-mini-CLI/utils"
-	"github.com/Yair0001/GPT-4o-mini-CLI/websocket"
-
-	
+	"github.com/Yair0001/GPT-4o-mini-CLI/websocket"	
 )
 
 var (
@@ -22,12 +18,14 @@ var (
 )
 
 func main() {
+	// Get the API key
 	apiKey := config.GetAPIKey()
 	if apiKey == "" {
 		fmt.Println("OPENAI_API_KEY not set")
 		return
 	}
 
+	// Connect to the WebSocket
 	var err error
 	conn, err := websocket.Connect(apiKey)
 	if err != nil {
@@ -36,6 +34,7 @@ func main() {
 	}
 	defer conn.Close()
 
+	// Initialize the session
 	sessionID, err = websocket.InitSession(conn)
 	if err != nil {
 		fmt.Println("Session init error:", err)
@@ -53,6 +52,7 @@ func main() {
 		return
 	}
 
+	// Start the user input and message receiver handlers
 	responseDone = make(chan bool, 1)
 	responseDone <- true
 
