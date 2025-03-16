@@ -41,7 +41,6 @@ This project is a real-time command-line interface (CLI) that interacts with Ope
 2. Install dependencies:
    ```sh
    go mod tidy
-   go get github.com/gorilla/websocket
    ```
 3. Run the application:
    ```sh
