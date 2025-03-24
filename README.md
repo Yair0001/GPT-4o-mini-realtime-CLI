@@ -46,3 +46,18 @@ This project is a real-time command-line interface (CLI) that interacts with Ope
    ```sh
    go run main.go
    ```
+
+
+
+# RAG X
+
+## Project Structure
+    src
+        embedding.py
+        extraction.py
+        main.py
+        utils.py
+        requirements.txt
+## Setup
+    pip install -r requirements.txt
+    python3 main.py <FOLDER PATH1> <FOLDER PATH2>
